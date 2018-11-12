@@ -101,7 +101,8 @@ int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
                 
                 while(fgets(wordReceiver, size, fp) != NULL){
 
-                    printf("String to be copied: %s\n", wordReceiver);
+                    //printf("String to be copied: %s\n", wordReceiver);
+                    
 
                     if(wordReceiver[0] % currentValue == 0){
                         //Insert to header
@@ -113,17 +114,18 @@ int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
                             head = temp;
                             ptr = head;
                         }else{
-
-                            if(fgets(wordReceiver, size, fp) == NULL){
-                                ptr->next = NULL;
-                            }else{
-                                temp = (LETTER *)malloc(sizeof(LETTER));
-                                strcpy(temp->word, wordReceiver);
-                                ptr->next = temp;
-                                ptr = ptr->next;
-                            }
+                
+                            temp = (LETTER *)malloc(sizeof(LETTER));
+                            strcpy(temp->word, wordReceiver);
+                            printf("temp->word is: %s", temp->word);
+                            ptr->next = temp;
+                            ptr = ptr->next;
+                        
+                            if(fgets(wordReceiver, size, fp) == NULL) ptr->next = NULL;
                             
                         }
+
+                       
                     }else{
                         //Moving to the next directory
                         if(j == 4 && i != 4){
@@ -151,29 +153,30 @@ int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
                             head = directory[i].letter[j+1];
                             
                         }
+
+                        
                         
                         
                         currentValue += 1;
                     }
                 }
 
-                ptr->next = NULL;
+               
 
                 
             }
         }
 
+        // for(i=0; i<5; i++){
+        //     for(j=0; j<5; j++){
 
-        for(i=0; i<5; i++){
-            for(j=0; j<5; j++){
-
-                ptr2 = directory[i].letter[j];
-                while(ptr2 != NULL){
-                    printf("String is: %s\n", ptr2->word);
-                    ptr2 = ptr2->next = NULL;
-                }
-            }
-        }
+        //         ptr2 = directory[i].letter[j];
+        //         while(ptr2 != NULL){
+        //             printf("String is: %s\n", ptr2->word);
+        //             ptr2 = ptr2->next = NULL;
+        //         }
+        //     }
+        // }
         
         // ptr2 = head;
         // int m = 1;
