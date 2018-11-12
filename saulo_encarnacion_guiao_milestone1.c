@@ -3,13 +3,6 @@
 #include<string.h>
 #define N 3
 
-/*
-
-    arr[5]
-
-*/
-
-
 
 //Struct for each string
 typedef struct node_tag{
@@ -25,7 +18,7 @@ typedef struct node_tag1{
 
 typedef struct node_tag2{
     int index;
-    struct node_tag LETTER[5];
+    struct node_tag1 *letter[5];
 }DIRECTORY;
 
 void toLowerCase(char s[]){
@@ -67,6 +60,14 @@ int scanRecords(NODE arr[], int size, int M, char *file) {
     }
 }
 
+void printASCII(){
+    int i=0;
+
+    for(i=97; i<97+26; i++){
+        printf("Letter: %c\tValue: %d\n", i, i);
+    }
+}
+
 //LinkedList implementation
 int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
 
@@ -76,8 +77,14 @@ int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
     char wordReceiver[50];
     int lineReceiver;
 
+    //i -> 5
     int i = 0;
+    //j -> 5
+    int j = 0;
     FILE * fp = fopen(file, "r");
+
+    int currentValue = 97;
+    int pastValue = 97;
 
 
     if (fp == NULL) {
@@ -86,48 +93,97 @@ int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
     }
     else {
 
-        for (i = 0; i < M && fgets(wordReceiver, size, fp) != NULL; ++i) {
-            lineReceiver = i+1;
+        //All 5 directories
+        for(i=0; i<5; i++){
+            //Each directory has 5 letters each except for the last one which has two
+            for(j=0; j<5; j++){
 
-            if (wordReceiver[strlen(wordReceiver)-1] == '\n') wordReceiver[strlen(wordReceiver)-1] = '\0';
-            else wordReceiver[strlen(wordReceiver)] = '\0';
-
-            //Changes all strings to lowercase
-            toLowerCase(wordReceiver);
-            //printf("Word receiver is: %s\n", wordReceiver);
-
-            if(wordReceiver[0] == 'a'){
-                //Insert
-                if(head == NULL){
-                    temp = (LETTER *)malloc(sizeof(LETTER));
-                    strcpy(temp->word, wordReceiver);
-                    printf("temp->word is: %s", temp->word);
-                    head = temp;
-                    ptr = head;
-                }else{
-                    temp = (LETTER *)malloc(sizeof(LETTER));
-                    strcpy(temp->word, wordReceiver);
-                    ptr->next = temp;
-                    ptr = ptr->next;
-                }
                 
-            }else{
-                break;
+                while(fgets(wordReceiver, size, fp) != NULL){
+
+                    printf("String to be copied: %s\n", wordReceiver);
+
+                    if(wordReceiver[0] % currentValue == 0){
+                        //Insert to header
+                        //Insert
+                        if(head == NULL){
+                            temp = (LETTER *)malloc(sizeof(LETTER));
+                            strcpy(temp->word, wordReceiver);
+                            printf("temp->word is: %s", temp->word);
+                            head = temp;
+                            ptr = head;
+                        }else{
+
+                            if(fgets(wordReceiver, size, fp) == NULL){
+                                ptr->next = NULL;
+                            }else{
+                                temp = (LETTER *)malloc(sizeof(LETTER));
+                                strcpy(temp->word, wordReceiver);
+                                ptr->next = temp;
+                                ptr = ptr->next;
+                            }
+                            
+                        }
+                    }else{
+                        //Moving to the next directory
+                        if(j == 4 && i != 4){
+                            ptr->next = NULL;
+                            temp = (LETTER *)malloc(sizeof(LETTER));
+                            strcpy(temp->word, wordReceiver);
+
+                            directory[i+1].letter[0] = temp;
+                            ptr = directory[i+1].letter[0];
+                            head = directory[i+1].letter[0];
+
+                            //For Y and Z // Continue
+                        }else if(j == 4 && i == 4){
+                            temp = (LETTER *)malloc(sizeof(LETTER));
+                            strcpy(temp->word, wordReceiver);
+                            ptr->next = temp;
+                            ptr = ptr->next;
+                        }else if(j<4 && i <4){
+                            //Moving to next letter only
+                            ptr->next = NULL;
+                            temp = (LETTER *)malloc(sizeof(LETTER));
+                            strcpy(temp->word, wordReceiver);
+                            directory[i].letter[j+1] = temp;
+                            ptr = directory[i].letter[j+1];
+                            head = directory[i].letter[j+1];
+                            
+                        }
+                        
+                        
+                        currentValue += 1;
+                    }
+                }
+
+                ptr->next = NULL;
+
+                
             }
-
-            
-            
         }
 
-        ptr2 = head;
-        int m = 1;
-        while(ptr2 != NULL){
-            printf("Word right now is: %s\n", ptr2->word);
-            ptr2 = ptr2->next;
-            m++;
-        }
 
-        printf("Number of a's: %d", m);
+        for(i=0; i<5; i++){
+            for(j=0; j<5; j++){
+
+                ptr2 = directory[i].letter[j];
+                while(ptr2 != NULL){
+                    printf("String is: %s\n", ptr2->word);
+                    ptr2 = ptr2->next = NULL;
+                }
+            }
+        }
+        
+        // ptr2 = head;
+        // int m = 1;
+        // while(ptr2 != NULL){
+        //     printf("Word right now is: %s\n", ptr2->word);
+        //     ptr2 = ptr2->next;
+        //     m++;
+        // }
+
+        //printf("Number of a's: %d", m);
         return 1;
     }
 }
@@ -144,7 +200,9 @@ int main(int argc, char *argv[]){
 
     //Read words.txt
 
-    int M = 10;
+    printASCII();
+
+    int M = 50000;
     int option[N+2][N+2];
     int nopts[N+2];
     int i, c;
@@ -153,7 +211,7 @@ int main(int argc, char *argv[]){
 
 	int k = N;
     int string_size = 50;
-    char *file = "words.txt";
+    char *file = "output.txt";
     char test3[N];
     char toCompare[N];
 
