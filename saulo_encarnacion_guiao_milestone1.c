@@ -363,7 +363,7 @@ int main(int argc, char *argv[]){
 
     //printASCII();
     int N = strlen(argv[1]);
-    printf("N is %d", N);
+    
 
     int M = 50000;
     int option[N+2][N+2];
@@ -378,6 +378,7 @@ int main(int argc, char *argv[]){
 
     //Test variables
     char test3[N];
+
     char toCompare[N];
     int toCompareLength;
 
@@ -410,7 +411,7 @@ int main(int argc, char *argv[]){
 	if(!scanRecordsHash2(myDictionary, string_size, file)) return 0;
     //viewRecords(records, M);
 
-    // This works!
+    // Traverse
     // for(i=0; i<26; i++){
     //     traverser = myDictionary[i];
     //     while(traverser != NULL){
@@ -420,11 +421,72 @@ int main(int argc, char *argv[]){
     // }
 
 
-    printf("Input string is: %s\n\n", argv[1]);
-    strcpy(test3, argv[1]);
-
+    printf("Input string 1 is: %s\n", argv[1]);
+    printf("Input string 2 is: %s\n", argv[2]);
+    printf("N is %d\n", N);
     
+    strcpy(test3, argv[1]);
+    
+    int test4Length = strlen(argv[2]);
+    char test4[test4Length];
+    strcpy(test4, argv[2]);
 
+    /*
+        Thought process for milestone 2:
+        1. Note the indices of the underscores
+        2. Note the remaining letters
+        3. Permutate the remaining letters
+        4. Assign them to their corresponding index
+        5. Begin search
+    */
+
+    int indices=0;
+    int remainingLettersIndices[N];
+    int remainingLetters=0;
+    int indexFlags[indices];
+    int counter=0;
+
+    //Finds number of underscores
+    for(int i=0; i<strlen(test4); i++){
+        if(test4[i] == '_'){
+            indices++;   
+        }else{
+            
+        }
+    }
+
+    char lettersToPermutate[indices];
+
+    printf("Number of underscores: %d\n", indices);
+    printf("============\n");
+
+    //Stores the indices of the underscores
+    while(counter != indices){
+        for(i=0; i<strlen(test4); i++){
+            if(test4[i] == '_'){
+                indexFlags[counter] = i;
+                counter++;
+            }
+        }
+    }
+
+    for(int i=0; i<indices; i++){
+        printf("Underscores @ %d\n", indexFlags[i]);
+    }
+
+    // printf("Remaining letters are: \n");
+    // for(int i=0; i<N; i++){
+    //     if(remainingLettersIndices[i] == 0){
+    //         printf("%c ", test3[i]);
+    //     }
+    // }printf("\n");
+
+    //Important variables!
+    //indexFlags[] - contains indices of underscores
+    //indices - total number of underscores
+    //remainingLetters[] - contains the indices (from test3) of the remaining letters to be permutated
+    
+    
     while(nopts[start] > 0){
         if(nopts[move] > 0){
             nopts[++move] = 0;
@@ -436,6 +498,7 @@ int main(int argc, char *argv[]){
                 //Store to an array
                 int indexOfString = option[i][nopts[i]];
                 toCompare[i-1] = test3[indexOfString-1];
+                
                 //printf("%c", test3[indexOfString-1]);
                 //printf("%i ", option[i][nopts[i]]);
                 //printf("%i ", indexOfString);
@@ -443,14 +506,16 @@ int main(int argc, char *argv[]){
 
                 }
 
-                
-                int bookmark = toCompare[0] % 97;
-                traverser = myDictionary[bookmark];
-
                 // printf("Bookmark @ %d\n", bookmark);
                 // printf("toCompare value: %s\n", toCompare);
                 // printf("Strlen of toCompare %ld\n", strlen(toCompare));
-                
+
+                //Bookmark notes the index of the first letter in our dictionary
+                //For example, if the word is ant, a is noted as 97 in ASCII
+                //97 % 97 will yield 0, thus searches it in myDictionary[0]
+                int bookmark = toCompare[0] % 97;
+                traverser = myDictionary[bookmark];
+
                 toCompareLength = strlen(toCompare);
 
                 while(traverser != NULL){
@@ -467,32 +532,7 @@ int main(int argc, char *argv[]){
                         }
                     }
                     traverser = traverser->next;
-                }
-                // int indexChecker;
-
-                // int toCompareLength = strlen(toCompare);
-                // printf("String length of toCompare: %d", toCompareLength);
-                // char placeHolder[N];
-
-                // for(indexChecker=0; indexChecker<M; indexChecker++){
-                //     //printf("%s\n", records[indexChecker].s);
-                //     //printf("Processing: %d\n", indexChecker);
-
-                    
-                //     int wordLength = strlen(records[indexChecker].s);
-                //     if(toCompareLength == wordLength){
-                //         strcpy(placeHolder, records[indexChecker].s);
-                //         //printf("String to be compared: %s, %s\n", toCompare, placeHolder);
-                //         if(strcmp(toCompare, placeHolder) == 0){
-
-                //             printf("Match found!\n");
-                //             printf("Possible value: %s at index: %d", placeHolder, indexChecker+1);
-                //             //break;
-                //         }else{
-                //             //printf("processing...%d\n", indexChecker);
-                //         }
-                //     }
-                // }                
+                }            
             }else{
                 for(c = N; c>=1; c--){
                     for(i=move; i>0; i--){
@@ -501,7 +541,6 @@ int main(int argc, char *argv[]){
                     }
                     if(i<=0){
 						option[move][++nopts[move]] = c;
-							
 					}
                     
                 }
@@ -513,8 +552,8 @@ int main(int argc, char *argv[]){
 
         
     }
+    
 
     exit(1);
-
     return 1;
 }
