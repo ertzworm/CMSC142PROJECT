@@ -39,26 +39,10 @@
 */
 
 
-
-//Struct for each string
-typedef struct node_tag{
-    int lineNumber;
-    char s[50];
-}NODE;
-
 typedef struct node_tag1{
     struct node_tag1 *next;
     char word[50];
-}LETTER, WORD;
-
-typedef struct node_tag2{
-    int index;
-    struct node_tag1 *letter[5];
-}DIRECTORY;
-
-typedef struct node_tag3{
-    struct node_tag3 *next;
-}DICTIONARY;
+}LETTER;
 
 void toLowerCase(char s[]){
     int i = 0;
@@ -77,208 +61,18 @@ void printASCII(){
     }
 }
 
-//LinkedList implementation
-int scanRecordsLL(DIRECTORY directory[], int size, int M, char *file) {
-
-    LETTER *head, *temp, *ptr, *ptr2;
-    head = NULL;
-
-    char wordReceiver[50];
-    int lineReceiver;
-
-    //i -> 5
-    int i = 0;
-    //j -> 5
-    int j = 0;
-    FILE * fp = fopen(file, "r");
-
-    int currentValue = 97;
-    int pastValue = 97;
-
-
-    if (fp == NULL) {
-        printf("[ERROR] File could not be found.\n");
-        return 0;
-    }
-    else {
-
-        //All 5 directories
-        for(i=0; i<5; i++){
-            //Each directory has 5 letters each except for the last one which has two
-            for(j=0; j<5; j++){
-
-                
-                while(fgets(wordReceiver, size, fp) != NULL){
-
-                    //printf("String to be copied: %s\n", wordReceiver);
-                    
-
-                    if(wordReceiver[0] % currentValue == 0){
-                        //Insert to header
-                        //Insert
-                        if(head == NULL){
-                            temp = (LETTER *)malloc(sizeof(LETTER));
-                            strcpy(temp->word, wordReceiver);
-                            printf("temp->word is: %s", temp->word);
-                            head = temp;
-                            ptr = head;
-                        }else{
-                
-                            temp = (LETTER *)malloc(sizeof(LETTER));
-                            strcpy(temp->word, wordReceiver);
-                            printf("temp->word is: %s", temp->word);
-                            ptr->next = temp;
-                            ptr = ptr->next;
-                        
-                            if(fgets(wordReceiver, size, fp) == NULL) ptr->next = NULL;
-                            
-                        }
-
-                       
-                    }else{
-                        //Moving to the next directory
-                        if(j == 4 && i != 4){
-                            ptr->next = NULL;
-                            temp = (LETTER *)malloc(sizeof(LETTER));
-                            strcpy(temp->word, wordReceiver);
-
-                            directory[i+1].letter[0] = temp;
-                            ptr = directory[i+1].letter[0];
-                            head = directory[i+1].letter[0];
-
-                            //For Y and Z // Continue
-                        }else if(j == 4 && i == 4){
-                            temp = (LETTER *)malloc(sizeof(LETTER));
-                            strcpy(temp->word, wordReceiver);
-                            ptr->next = temp;
-                            ptr = ptr->next;
-                        }else if(j<4 && i <4){
-                            //Moving to next letter only
-                            ptr->next = NULL;
-                            temp = (LETTER *)malloc(sizeof(LETTER));
-                            strcpy(temp->word, wordReceiver);
-                            directory[i].letter[j+1] = temp;
-                            ptr = directory[i].letter[j+1];
-                            head = directory[i].letter[j+1];
-                            
-                        }
-
-                        
-                        
-                        
-                        currentValue += 1;
-                    }
-                }
-
-               
-
-                
-            }
-        }
-
-        // for(i=0; i<5; i++){
-        //     for(j=0; j<5; j++){
-
-        //         ptr2 = directory[i].letter[j];
-        //         while(ptr2 != NULL){
-        //             printf("String is: %s\n", ptr2->word);
-        //             ptr2 = ptr2->next = NULL;
-        //         }
-        //     }
-        // }
-        
-        // ptr2 = head;
-        // int m = 1;
-        // while(ptr2 != NULL){
-        //     printf("Word right now is: %s\n", ptr2->word);
-        //     ptr2 = ptr2->next;
-        //     m++;
-        // }
-
-        //printf("Number of a's: %d", m);
-        return 1;
-    }
-}
-
-
-//Print
-void viewRecords(NODE arr[], int n){
+void getSubstring(char out[], char in[], int x){
     int i;
-    for(i=0; i<n; i++) printf("%s\n", arr[i].s);
-}
 
+    for(i=0; i<x; i++){
+        out[i] = in[i];
+    }
+}
 
 //Create Hashmap implementation
 //Set to lowercase before reading
 //Check if it has non-alphabet values
 //a[26][a-z], insert at head
-
-int scanRecordsHash(DICTIONARY dictionary[], int size, char *file){
-
-    int i = 0;
-    int counter = 0;
-    int bookmark;
-
-	LETTER *try[26];
-	for(i=0; i<26; i++){
-		try[i] = NULL;
-	}
-
-    LETTER *head, *temp, *ptr;
-    head = NULL;
-
-    FILE *fp = fopen(file, "r");
-    char wordReceiver[50];
-
-    if(fp == NULL){
-        printf("[ERROR] File not found!\n");
-        return 0;
-    }else{
-           while(fgets(wordReceiver, size, fp) != NULL){
-               toLowerCase(wordReceiver);
-               //This sets a mark that corresponds as a key to the first letter of the word
-               bookmark = wordReceiver[0] % 97;
-
-			   //Test bench: Create list of A
-               
-                   temp = (LETTER *)malloc(sizeof(LETTER));
-				   strcpy(temp->word, wordReceiver);
-				   temp->next = NULL;
-				   
-				   if(try[bookmark] == NULL){
-					   try[bookmark] = temp;
-				   }else{
-					   head = try[bookmark];
-					   temp->next = head;
-					   try[bookmark] = temp;
-				   }
-               
-               
-
-               //Set pointer
-
-
-            //    if(wordReceiver[0] == 'z'){
-            //        bookmark = wordReceiver[0] % 97;
-            //        counter++;
-            //        printf("[%d] String is: %s saved @ [%d]\n", counter, wordReceiver, bookmark);
-            //    }
-           }
-    }
-
-
-	
-
-	for(i=0; i<26; i++){
-		ptr = try[i];
-		while(ptr != NULL){
-			printf("Stored string: %s\n", ptr->word);
-			ptr = ptr->next;
-		}
-	}
-	
-}
-
 int scanRecordsHash2(LETTER *myDictionary[], int size, char *file){
 
 	int i = 0;
@@ -303,71 +97,224 @@ int scanRecordsHash2(LETTER *myDictionary[], int size, char *file){
     }else{
         while(fgets(wordReceiver, size, fp) != NULL){
             toLowerCase(wordReceiver);
+
+            //Trim wordReceiver
             if (wordReceiver[strlen(wordReceiver)-1] == '\n') wordReceiver[strlen(wordReceiver)-1] = '\0';
             else wordReceiver[strlen(wordReceiver)] = '\0';
+            
             //This sets a mark that corresponds as a key to the first letter of the word
             bookmark = wordReceiver[0] % 97;
-
-			   //Test bench: Create list of A
-               
-                temp = (LETTER *)malloc(sizeof(LETTER));
-				strcpy(temp->word, wordReceiver);
-				temp->next = NULL;
-				   
-				if(myDictionary[bookmark] == NULL){
-					myDictionary[bookmark] = temp;
-				}else{
-					head = myDictionary[bookmark];
-					temp->next = head;
-					myDictionary[bookmark] = temp;
-                    head = NULL;
-				}
+            
+            //Creation of node
+            temp = (LETTER *)malloc(sizeof(LETTER));
+			strcpy(temp->word, wordReceiver);
+			temp->next = NULL;
+			
+            //Insert at head
+			if(myDictionary[bookmark] == NULL){
+				myDictionary[bookmark] = temp;
+			}else{
+				head = myDictionary[bookmark];
+				temp->next = head;
+				myDictionary[bookmark] = temp;
+                head = NULL;
+			}
         }
     }
     return 1;
 }
 
-//File reading
-//Words should be sorted first in ascending order
-int scanRecords(NODE arr[], int size, int M, char *file) {
+//Gets number of underscores
+int getIndices(char wordToGuess[]){
 
-   
-    int i = 0;
-    FILE * fp = fopen(file, "r");
+    int indices = 0;
+    int i;
 
-
-    if (fp == NULL) {
-        printf("[ERROR] File could not be found.\n");
-        return 0;
-    }
-    else {
-
-        for (i = 0; i < M && fgets(arr[i].s, size, fp) != NULL; ++i) {
-            arr[i].lineNumber = i+1;
-
-            if (arr[i].s[strlen(arr[i].s)-1] == '\n') arr[i].s[strlen(arr[i].s)-1] = '\0';
-            else arr[i].s[strlen(arr[i].s)] = '\0';
-
-            //Changes all strings to lowercase
-            toLowerCase(arr[i].s);
-            printf("String is: %s\n", arr[i].s);
-            
+    for(i=0; i<strlen(wordToGuess); i++){
+        if(wordToGuess[i] == '_'){
+            indices++;   
         }
-        return 1;
     }
+
+    return indices;
+}
+
+void getUnderscoreIndices(int underscoreIndices[], int indices, char wordToGuess[]){
+
+    int counter = 0;
+    int i;
+
+     while(counter != indices){
+        for(i=0; i<strlen(wordToGuess); i++){
+            if(wordToGuess[i] == '_'){
+                underscoreIndices[counter] = i;
+                counter++;
+            }
+        }
+    }
+}
+
+void addToPermutated(LETTER **permutated, char allowedPermutations[]){
+
+    LETTER *head = NULL;
+    LETTER *temp;
+    LETTER *newNode;
+
+    head = *permutated;
+    
+    newNode = (LETTER *)malloc(sizeof(LETTER));
+    strcpy(newNode->word, allowedPermutations);
+    //Trim newNode->word
+    if (newNode->word[strlen(newNode->word)-1] == '\n') newNode->word[strlen(newNode->word)-1] = '\0';
+    else newNode->word[strlen(newNode->word)] = '\0';
+
+    newNode->next = NULL;
+
+    if(head == NULL){
+        head = newNode;
+    }else{
+        for(temp = head; strcmp(temp->word, allowedPermutations) != 0; temp=temp->next){
+            if(temp == NULL){
+                newNode->next = head;
+                head = newNode;
+            }
+        }
+    }
+
+    LETTER *ptr;
+    ptr = *permutated;
+    printf("Words: \n");
+    while(ptr != NULL){
+        printf("%s\n", ptr->word);
+        ptr = ptr->next;
+    }
+}
+
+int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
+
+    int option[N+2][N+2];
+    int nopts[N+2];
+
+    int i,c;
+    int move = 0, start = 0;
+    int k = N;
+    
+    nopts[start] = 1;
+    option[0][1] = 0;
+
+    int outputLength = strlen(lettersToPermutate);
+    char output[outputLength+1];
+
+    printf("Output length: %d\n", outputLength);
+    output[outputLength] = 0;
+
+    int indices = getIndices(wordToGuess);
+    int underscoreIndices[indices];
+
+    getUnderscoreIndices(underscoreIndices, indices, wordToGuess);
+
+    printf("Letters To Permutate(L): %ld", strlen(lettersToPermutate));
+
+    LETTER *permutated = NULL;
+
+    char toCompare2[N];
+
+    while(nopts[start] > 0){
+        if(nopts[move] > 0){
+            nopts[++move] = 0;
+			
+            if(move == N+1){
+				//If it reaches the last index, print
+                for(i=1; i<=N; i++){
+
+                //Store to an array
+                int indexOfString = option[i][nopts[i]];
+                //toCompare[i-1] = test3[indexOfString-1];
+                output[i-1] = lettersToPermutate[indexOfString-1];
+                printf("%c ", output[i-1]);
+                
+                //printf("%c", test3[indexOfString-1]);
+                //printf("%i ", option[i][nopts[i]]);
+                //printf("%i ", indexOfString);
+                //printf("%c ", test3[indexOfString-1]);
+                }
+
+                printf("strlen of output: %ld\n", strlen(output));
+                printf("Permutated Word: %s\n", output);
+                char subString[strlen(output)+1];
+                subString[strlen(output)] = 0;
+                getSubstring(subString, output, indices);
+
+                printf("Substring is: %s\n", subString);
+
+                addToPermutated(&permutated, subString);
+                
+
+                //addToPermutatedList()
+
+                char testVar[strlen(wordToGuess)];
+                strcpy(testVar, wordToGuess);
+
+                // for(i=0; i<indices; i++){
+                //     testVar[indexFlags[i]] = output[i]; 
+                // }
+
+                //Bookmark notes the index of the first letter in our dictionary
+                //For example, if the word is ant, a is noted as 97 in ASCII
+                //97 % 97 will yield 0, thus searches it in myDictionary[0]
+
+                //For testVar
+                // int bookmark = testVar[0] % 97;
+                // traverser = myDictionary[bookmark];
+
+                // testVarLength = strlen(testVar);
+
+                // while(traverser != NULL){
+                //     int wordLength = strlen(traverser->word);
+                    
+                //     //printf("toCompare value: %s\n", toCompare);
+                //     //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
+
+                //     //Comparison only done between strings of equal length
+                //     if(testVarLength == wordLength){
+                //         if(strcmp(traverser->word, testVar) == 0){
+                //             printf("Found match! %s\n", traverser->word);
+                //             break;
+                //         }
+                //     }
+                //     traverser = traverser->next;
+                // }
+
+            }else{
+                for(c = N; c>=1; c--){
+                    for(i=move; i>0; i--){
+                        if(c==option[i][nopts[i]])
+                            break;
+                    }
+                    if(i<=0){
+						option[move][++nopts[move]] = c;
+					}
+                    
+                }
+				
+            }
+        }else{
+            nopts[--move]--;
+        }
+    }
+
+    
+
+    return 0;
 }
 
 int main(int argc, char *argv[]){
 
-    //Read words.txt
-
-    //printASCII();
+    //Initialization of values
     int N = strlen(argv[1]);
-    
-
-    int M = 50000;
     int option[N+2][N+2];
     int nopts[N+2];
+
     int i, c, j;
     int move = 0, start = 0;
 
@@ -378,75 +325,40 @@ int main(int argc, char *argv[]){
 
     //Test variables
     char test3[N];
-
     char toCompare[N];
     int toCompareLength;
     int testVarLength;
 
-    //printf("toCompare length %ld ", strlen(toCompare));
-
-    NODE records[M];
-    DIRECTORY directory[5];
-    LETTER a[M];
-
-    DICTIONARY dictionary[26];
-
     nopts[start] = 1;
     option[0][1] = 0;
 
+    //Array of pointers + pointer for traversal
 	LETTER *myDictionary[26];
     LETTER *traverser;
 
-	// for(i=0; i<26; i++){
-	// 	traverser = myDictionary[i];
-	// 	while(traverser != NULL){
-	// 		printf("Stored string: %s\n", traverser->word);
-	// 		traverser = traverser->next;
-	// 	}
-	// }
-
-    //Implementations
-    //if(!scanRecordsLL(directory, string_size, M, file)) return 0;
-    //if(!scanRecords(records, string_size, M, file)) return 0;
-    //if(!scanRecordsHash(dictionary, string_size, file)) return 0;
 	if(!scanRecordsHash2(myDictionary, string_size, file)) return 0;
-    //viewRecords(records, M);
-
-    // Traverse
-    // for(i=0; i<26; i++){
-    //     traverser = myDictionary[i];
-    //     while(traverser != NULL){
-    //         printf("Current word is: %s", traverser->word);
-    //         traverser = traverser->next;
-    //     }
-    // }
-
-
-    printf("Input string 1 is: %s\n", argv[1]);
-    printf("Input string 2 is: %s\n", argv[2]);
-    printf("N is %d\n", N);
     
-    strcpy(test3, argv[1]);
+    //Assignment of arguments to variable
     
+
     int test4Length = strlen(argv[2]);
-    printf("test4Length: %d\n", test4Length);
     char test4[test4Length];
-    strcpy(test4, argv[2]);
-    printf("Argv[2] is %s\n", test4);
 
-    /*
-        Thought process for milestone 2:
-        1. Note the indices of the underscores
-        2. Note the remaining letters
-        3. Permutate the remaining letters
-        4. Assign them to their corresponding index
-        5. Begin search
-    */
+    strcpy(test3, argv[1]);
+    strcpy(test4, argv[2]);
+
+    
+    // Thought process for milestone 2:
+    // 1. Note the indices of the underscores
+    // 2. Note the remaining letters
+    // 3. Permutate the remaining letters
+    // 4. Assign them to their corresponding index
+    // 5. Begin search
+    
 
     int indices=0;
     int remainingLettersIndices[N];
     int remainingLetters=0;
-    int indexFlags[indices];
     int counter=0;
 
     //Finds number of underscores
@@ -456,15 +368,17 @@ int main(int argc, char *argv[]){
         }
     }
 
-    printf("Number of underscores: %d\n", indices);
-
+    //Marks underscores' positions
+    int indexFlags[indices];
     
     int fixedLength = strlen(test4) - indices;
     int toPermutateLength = strlen(test3) - fixedLength;
+    printf("TPL : %d\n", toPermutateLength);
+
+
+    //fixedLetters - cross-referencing sustained letters to argv[1] to get remaining letters to permutate
     char lettersToPermutate[toPermutateLength];
     char fixedLetters[fixedLength];
-
-    printf("TPL: %d and FL: %d\n", toPermutateLength, fixedLength);
 
     char s4[strlen(test4)];
     char s3[strlen(test3)];
@@ -472,7 +386,6 @@ int main(int argc, char *argv[]){
 
     //S4 - copy of argv[2]
     strcpy(s4, test4);
-    printf("S4 length is %ld\n", strlen(s4));
 
     i=0;
     while(i<fixedLength){
@@ -512,10 +425,6 @@ int main(int argc, char *argv[]){
     printf("Fixed Letters: %s\n", fixedLetters);
     printf("s3 is %s\n", s3);
     printf("Letters to permutate are %s\n", lettersToPermutate);
-
-
-
-    
     printf("============\n");
 
     //Stores the indices of the underscores
@@ -528,130 +437,92 @@ int main(int argc, char *argv[]){
         }
     }
 
-    for(i=0; i<indices; i++){
-        printf("Underscores @ %d\n", indexFlags[i]);
-    }
-
-    // printf("Remaining letters are: \n");
-    // for(int i=0; i<N; i++){
-    //     if(remainingLettersIndices[i] == 0){
-    //         printf("%c ", test3[i]);
-    //     }
-    // }printf("\n");
+    // for(i=0; i<indices; i++){
+    //     printf("Underscores @ %d\n", indexFlags[i]);
+    // }
 
     //Important variables!
     //indexFlags[] - contains indices of underscores
     //indices - total number of underscores
-    //remainingLetters[] - contains the indices (from test3) of the remaining letters to be permutated
 
     N = toPermutateLength;
     char toCompare2[N];
+
+    printf("Letters to permutate : %s!!!\n", lettersToPermutate);
+
+    backtrack(N, lettersToPermutate, test4);
     
     
-    while(nopts[start] > 0){
-        if(nopts[move] > 0){
-            nopts[++move] = 0;
+    // while(nopts[start] > 0){
+    //     if(nopts[move] > 0){
+    //         nopts[++move] = 0;
 			
-            if(move == N+1){
-				//If it reaches the last index, print
-                for(i=1; i<=N; i++){
+    //         if(move == N+1){
+	// 			//If it reaches the last index, print
+    //             for(i=1; i<=N; i++){
 
-                //Store to an array
-                int indexOfString = option[i][nopts[i]];
-                //toCompare[i-1] = test3[indexOfString-1];
-                toCompare2[i-1] = lettersToPermutate[indexOfString-1];
+    //             //Store to an array
+    //             int indexOfString = option[i][nopts[i]];
+    //             //toCompare[i-1] = test3[indexOfString-1];
+    //             toCompare2[i-1] = lettersToPermutate[indexOfString-1];
                 
-                //printf("%c", test3[indexOfString-1]);
-                //printf("%i ", option[i][nopts[i]]);
-                //printf("%i ", indexOfString);
-                //printf("%c ", test3[indexOfString-1]);
-                }
+    //             //printf("%c", test3[indexOfString-1]);
+    //             //printf("%i ", option[i][nopts[i]]);
+    //             //printf("%i ", indexOfString);
+    //             //printf("%c ", test3[indexOfString-1]);
+    //             }
 
-                printf("Permutated Word: %s\n", toCompare2);
-                char testVar[strlen(test4)];
-                strcpy(testVar, test4);
+    //             //printf("Permutated Word: %s\n", toCompare2);
+    //             char testVar[strlen(test4)];
+    //             strcpy(testVar, test4);
 
-                for(i=0; i<indices; i++){
-                    testVar[indexFlags[i]] = toCompare2[i]; 
-                }
+    //             for(i=0; i<indices; i++){
+    //                 testVar[indexFlags[i]] = toCompare2[i]; 
+    //             }
 
-                printf("Testvar is %s\n", testVar);
-                
+    //             //Bookmark notes the index of the first letter in our dictionary
+    //             //For example, if the word is ant, a is noted as 97 in ASCII
+    //             //97 % 97 will yield 0, thus searches it in myDictionary[0]
 
-                // printf("Bookmark @ %d\n", bookmark);
-                // printf("toCompare value: %s\n", toCompare);
-                // printf("Strlen of toCompare %ld\n", strlen(toCompare));
+    //             //For testVar
+    //             int bookmark = testVar[0] % 97;
+    //             traverser = myDictionary[bookmark];
 
-                //Bookmark notes the index of the first letter in our dictionary
-                //For example, if the word is ant, a is noted as 97 in ASCII
-                //97 % 97 will yield 0, thus searches it in myDictionary[0]
+    //             testVarLength = strlen(testVar);
 
-                // For toCompare
-                // int bookmark = toCompare[0] % 97;
-                // traverser = myDictionary[bookmark];
-
-                // toCompareLength = strlen(toCompare);
-
-                // while(traverser != NULL){
-                //     int wordLength = strlen(traverser->word);
+    //             while(traverser != NULL){
+    //                 int wordLength = strlen(traverser->word);
                     
-                //     //printf("toCompare value: %s\n", toCompare);
-                //     //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
+    //                 //printf("toCompare value: %s\n", toCompare);
+    //                 //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
 
-                //     //Comparison only done between strings of equal length
-                //     if(toCompareLength == wordLength){
-                //         if(strcmp(traverser->word, toCompare) == 0){
-                //             printf("Found match! %s\n", traverser->word);
-                //             break;
-                //         }
-                //     }
-                //     traverser = traverser->next;
-                // }
+    //                 //Comparison only done between strings of equal length
+    //                 if(testVarLength == wordLength){
+    //                     if(strcmp(traverser->word, testVar) == 0){
+    //                         printf("Found match! %s\n", traverser->word);
+    //                         break;
+    //                     }
+    //                 }
+    //                 traverser = traverser->next;
+    //             }
 
-
-                //For testVar
-                int bookmark = testVar[0] % 97;
-                traverser = myDictionary[bookmark];
-
-                testVarLength = strlen(testVar);
-
-                while(traverser != NULL){
-                    int wordLength = strlen(traverser->word);
+    //         }else{
+    //             for(c = N; c>=1; c--){
+    //                 for(i=move; i>0; i--){
+    //                     if(c==option[i][nopts[i]])
+    //                         break;
+    //                 }
+    //                 if(i<=0){
+	// 					option[move][++nopts[move]] = c;
+	// 				}
                     
-                    //printf("toCompare value: %s\n", toCompare);
-                    //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
-
-                    //Comparison only done between strings of equal length
-                    if(testVarLength == wordLength){
-                        if(strcmp(traverser->word, testVar) == 0){
-                            printf("Found match! %s\n", traverser->word);
-                            break;
-                        }
-                    }
-                    traverser = traverser->next;
-                }
-
-            }else{
-                for(c = N; c>=1; c--){
-                    for(i=move; i>0; i--){
-                        if(c==option[i][nopts[i]])
-                            break;
-                    }
-                    if(i<=0){
-						option[move][++nopts[move]] = c;
-					}
-                    
-                }
+    //             }
 				
-            }
-        }else{
-            nopts[--move]--;
-        }
-
-        
-    }
-    
-
+    //         }
+    //     }else{
+    //         nopts[--move]--;
+    //     }
+    // }
     exit(1);
     return 1;
 }
