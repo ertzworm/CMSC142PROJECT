@@ -282,10 +282,16 @@ int scanRecordsHash2(LETTER *myDictionary[], int size, char *file){
     int bookmark;
 
 	LETTER *head, *temp, *ptr;
+    //Set dictionary and head to NULL;
+    for(i=0; i<26; i++){
+        myDictionary[i] = NULL;
+    }
     head = NULL;
 
     FILE *fp = fopen(file, "r");
     char wordReceiver[50];
+
+    
 
     if(fp == NULL){
         printf("[ERROR] File not found!\n");
@@ -293,6 +299,8 @@ int scanRecordsHash2(LETTER *myDictionary[], int size, char *file){
     }else{
         while(fgets(wordReceiver, size, fp) != NULL){
             toLowerCase(wordReceiver);
+            if (wordReceiver[strlen(wordReceiver)-1] == '\n') wordReceiver[strlen(wordReceiver)-1] = '\0';
+            else wordReceiver[strlen(wordReceiver)] = '\0';
             //This sets a mark that corresponds as a key to the first letter of the word
             bookmark = wordReceiver[0] % 97;
 
@@ -308,9 +316,11 @@ int scanRecordsHash2(LETTER *myDictionary[], int size, char *file){
 					head = myDictionary[bookmark];
 					temp->next = head;
 					myDictionary[bookmark] = temp;
+                    head = NULL;
 				}
-        	}
+        }
     }
+    return 1;
 }
 
 //File reading
@@ -349,6 +359,7 @@ int main(int argc, char *argv[]){
 
     //printASCII();
     int N = strlen(argv[1]);
+    printf("N is %d", N);
 
     int M = 50000;
     int option[N+2][N+2];
@@ -364,6 +375,9 @@ int main(int argc, char *argv[]){
     //Test variables
     char test3[N];
     char toCompare[N];
+    int toCompareLength;
+
+    //printf("toCompare length %ld ", strlen(toCompare));
 
     NODE records[M];
     DIRECTORY directory[5];
@@ -375,19 +389,15 @@ int main(int argc, char *argv[]){
     option[0][1] = 0;
 
 	LETTER *myDictionary[26];
-	for(i=0; i<26; i++){
-		myDictionary[i] = NULL;
-	}
+    LETTER *traverser;
 
-	LETTER *traverser;
-
-	for(i=0; i<26; i++){
-		traverser = myDictionary[i];
-		while(traverser != NULL){
-			printf("Stored string: %s\n", traverser->word);
-			traverser = traverser->next;
-		}
-	}
+	// for(i=0; i<26; i++){
+	// 	traverser = myDictionary[i];
+	// 	while(traverser != NULL){
+	// 		printf("Stored string: %s\n", traverser->word);
+	// 		traverser = traverser->next;
+	// 	}
+	// }
 
     //Implementations
     //if(!scanRecordsLL(directory, string_size, M, file)) return 0;
@@ -396,11 +406,18 @@ int main(int argc, char *argv[]){
 	if(!scanRecordsHash2(myDictionary, string_size, file)) return 0;
     //viewRecords(records, M);
 
+    // This works!
+    // for(i=0; i<26; i++){
+    //     traverser = myDictionary[i];
+    //     while(traverser != NULL){
+    //         printf("Current word is: %s", traverser->word);
+    //         traverser = traverser->next;
+    //     }
+    // }
+
+
     printf("Input string is: %s\n\n", argv[1]);
     strcpy(test3, argv[1]);
-
-
-    //Read wordtxt
 
     
 
@@ -417,11 +434,36 @@ int main(int argc, char *argv[]){
                 toCompare[i-1] = test3[indexOfString-1];
                 //printf("%c", test3[indexOfString-1]);
                 //printf("%i ", option[i][nopts[i]]);
+                //printf("%i ", indexOfString);
+                //printf("%c ", test3[indexOfString-1]);
 
                 }
 
-                printf("toCompare value: %s", toCompare);
+                
+                int bookmark = toCompare[0] % 97;
+                traverser = myDictionary[bookmark];
 
+                // printf("Bookmark @ %d\n", bookmark);
+                // printf("toCompare value: %s\n", toCompare);
+                // printf("Strlen of toCompare %ld\n", strlen(toCompare));
+                
+                toCompareLength = strlen(toCompare);
+
+                while(traverser != NULL){
+                    int result = strcmp(traverser->word, toCompare);
+                    int wordLength = strlen(traverser->word);
+                    //printf("toCompare value: %s\n", toCompare);
+                    //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
+
+                    if(toCompareLength == wordLength){
+                        if(strcmp(traverser->word, toCompare) == 0){
+                            printf("Found match! %s\n", traverser->word);
+                            break;
+                        }
+                        
+                    }
+                    traverser = traverser->next;
+                }
                 // int indexChecker;
 
                 // int toCompareLength = strlen(toCompare);
@@ -468,5 +510,11 @@ int main(int argc, char *argv[]){
         }else{
             nopts[--move]--;
         }
+
+        
     }
+
+    exit(1);
+
+    return 1;
 }
