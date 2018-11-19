@@ -381,6 +381,7 @@ int main(int argc, char *argv[]){
 
     char toCompare[N];
     int toCompareLength;
+    int testVarLength;
 
     //printf("toCompare length %ld ", strlen(toCompare));
 
@@ -449,7 +450,7 @@ int main(int argc, char *argv[]){
     int counter=0;
 
     //Finds number of underscores
-    for(int i=0; i<strlen(test4); i++){
+    for(i=0; i<strlen(test4); i++){
         if(test4[i] == '_'){
             indices++;   
         }
@@ -469,8 +470,9 @@ int main(int argc, char *argv[]){
     char s3[strlen(test3)];
     char s5[strlen(test3)];
 
+    //S4 - copy of argv[2]
     strcpy(s4, test4);
-    printf("S4 is %ld\n", strlen(s4));
+    printf("S4 length is %ld\n", strlen(s4));
 
     i=0;
     while(i<fixedLength){
@@ -484,10 +486,32 @@ int main(int argc, char *argv[]){
         i++;
     }
 
+    //S3 - copy of argv[1]
+    strcpy(s3, test3);
+    for(i=0; i<fixedLength; i++){
+       for(j=0; j<N; j++){
+           if(fixedLetters[i] == s3[j]){
+               s3[j] = '+';
+               break;
+           }
+       }
+    }
+
+    strcpy(s5, s3);
+    for(i=0; i<toPermutateLength; i++){
+        for(j=0; j<N; j++){
+            if(s5[j] != '+'){
+                lettersToPermutate[i] = s5[j];
+                s5[j] = '+';
+                break;
+            }
+        }
+    }
+
     printf("Strlen of fixed is: %ld\n", strlen(fixedLetters));
     printf("Fixed Letters: %s\n", fixedLetters);
-
-
+    printf("s3 is %s\n", s3);
+    printf("Letters to permutate are %s\n", lettersToPermutate);
 
 
 
@@ -504,7 +528,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    for(int i=0; i<indices; i++){
+    for(i=0; i<indices; i++){
         printf("Underscores @ %d\n", indexFlags[i]);
     }
 
@@ -519,6 +543,9 @@ int main(int argc, char *argv[]){
     //indexFlags[] - contains indices of underscores
     //indices - total number of underscores
     //remainingLetters[] - contains the indices (from test3) of the remaining letters to be permutated
+
+    N = toPermutateLength;
+    char toCompare2[N];
     
     
     while(nopts[start] > 0){
@@ -531,14 +558,25 @@ int main(int argc, char *argv[]){
 
                 //Store to an array
                 int indexOfString = option[i][nopts[i]];
-                toCompare[i-1] = test3[indexOfString-1];
+                //toCompare[i-1] = test3[indexOfString-1];
+                toCompare2[i-1] = lettersToPermutate[indexOfString-1];
                 
                 //printf("%c", test3[indexOfString-1]);
                 //printf("%i ", option[i][nopts[i]]);
                 //printf("%i ", indexOfString);
                 //printf("%c ", test3[indexOfString-1]);
-
                 }
+
+                printf("Permutated Word: %s\n", toCompare2);
+                char testVar[strlen(test4)];
+                strcpy(testVar, test4);
+
+                for(i=0; i<indices; i++){
+                    testVar[indexFlags[i]] = toCompare2[i]; 
+                }
+
+                printf("Testvar is %s\n", testVar);
+                
 
                 // printf("Bookmark @ %d\n", bookmark);
                 // printf("toCompare value: %s\n", toCompare);
@@ -547,10 +585,35 @@ int main(int argc, char *argv[]){
                 //Bookmark notes the index of the first letter in our dictionary
                 //For example, if the word is ant, a is noted as 97 in ASCII
                 //97 % 97 will yield 0, thus searches it in myDictionary[0]
-                int bookmark = toCompare[0] % 97;
+
+                // For toCompare
+                // int bookmark = toCompare[0] % 97;
+                // traverser = myDictionary[bookmark];
+
+                // toCompareLength = strlen(toCompare);
+
+                // while(traverser != NULL){
+                //     int wordLength = strlen(traverser->word);
+                    
+                //     //printf("toCompare value: %s\n", toCompare);
+                //     //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
+
+                //     //Comparison only done between strings of equal length
+                //     if(toCompareLength == wordLength){
+                //         if(strcmp(traverser->word, toCompare) == 0){
+                //             printf("Found match! %s\n", traverser->word);
+                //             break;
+                //         }
+                //     }
+                //     traverser = traverser->next;
+                // }
+
+
+                //For testVar
+                int bookmark = testVar[0] % 97;
                 traverser = myDictionary[bookmark];
 
-                toCompareLength = strlen(toCompare);
+                testVarLength = strlen(testVar);
 
                 while(traverser != NULL){
                     int wordLength = strlen(traverser->word);
@@ -559,14 +622,15 @@ int main(int argc, char *argv[]){
                     //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
 
                     //Comparison only done between strings of equal length
-                    if(toCompareLength == wordLength){
-                        if(strcmp(traverser->word, toCompare) == 0){
+                    if(testVarLength == wordLength){
+                        if(strcmp(traverser->word, testVar) == 0){
                             printf("Found match! %s\n", traverser->word);
                             break;
                         }
                     }
                     traverser = traverser->next;
-                }            
+                }
+
             }else{
                 for(c = N; c>=1; c--){
                     for(i=move; i>0; i--){
