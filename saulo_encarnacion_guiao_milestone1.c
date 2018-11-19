@@ -368,7 +368,7 @@ int main(int argc, char *argv[]){
     int M = 50000;
     int option[N+2][N+2];
     int nopts[N+2];
-    int i, c;
+    int i, c, j;
     int move = 0, start = 0;
 
 
@@ -428,8 +428,10 @@ int main(int argc, char *argv[]){
     strcpy(test3, argv[1]);
     
     int test4Length = strlen(argv[2]);
+    printf("test4Length: %d\n", test4Length);
     char test4[test4Length];
     strcpy(test4, argv[2]);
+    printf("Argv[2] is %s\n", test4);
 
     /*
         Thought process for milestone 2:
@@ -450,14 +452,46 @@ int main(int argc, char *argv[]){
     for(int i=0; i<strlen(test4); i++){
         if(test4[i] == '_'){
             indices++;   
-        }else{
-            
         }
     }
 
-    char lettersToPermutate[indices];
-
     printf("Number of underscores: %d\n", indices);
+
+    
+    int fixedLength = strlen(test4) - indices;
+    int toPermutateLength = strlen(test3) - fixedLength;
+    char lettersToPermutate[toPermutateLength];
+    char fixedLetters[fixedLength];
+
+    printf("TPL: %d and FL: %d\n", toPermutateLength, fixedLength);
+
+    char s4[strlen(test4)];
+    char s3[strlen(test3)];
+    char s5[strlen(test3)];
+
+    strcpy(s4, test4);
+    printf("S4 is %ld\n", strlen(s4));
+
+    i=0;
+    while(i<fixedLength){
+        for(j=0; j<test4Length; j++){
+            if(s4[j] != '_'){
+                fixedLetters[i] = s4[j];
+                s4[j] = '_';
+                break;
+            }
+        }
+        i++;
+    }
+
+    printf("Strlen of fixed is: %ld\n", strlen(fixedLetters));
+    printf("Fixed Letters: %s\n", fixedLetters);
+
+
+
+
+
+    
     printf("============\n");
 
     //Stores the indices of the underscores
