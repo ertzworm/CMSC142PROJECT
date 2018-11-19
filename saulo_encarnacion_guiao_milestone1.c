@@ -489,10 +489,6 @@ int main(int argc, char *argv[]){
                 //         }
                 //     }
                 // }                
-                                
-
-                //Newline
-                printf("\n");
             }else{
                 for(c = N; c>=1; c--){
                     for(i=move; i>0; i--){
