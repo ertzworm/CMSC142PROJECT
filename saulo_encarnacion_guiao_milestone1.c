@@ -4,6 +4,10 @@
 
 
 /*
+    Encarnacion, Guiao, Saulo
+*/
+
+/*
 
     Number of words:
     a: 30850
@@ -450,17 +454,17 @@ int main(int argc, char *argv[]){
                 toCompareLength = strlen(toCompare);
 
                 while(traverser != NULL){
-                    int result = strcmp(traverser->word, toCompare);
                     int wordLength = strlen(traverser->word);
+                    
                     //printf("toCompare value: %s\n", toCompare);
                     //printf("Dictionary word is: %s vs %s\n", traverser->word, toCompare);
 
+                    //Comparison only done between strings of equal length
                     if(toCompareLength == wordLength){
                         if(strcmp(traverser->word, toCompare) == 0){
                             printf("Found match! %s\n", traverser->word);
                             break;
                         }
-                        
                     }
                     traverser = traverser->next;
                 }
@@ -489,10 +493,6 @@ int main(int argc, char *argv[]){
                 //         }
                 //     }
                 // }                
-                                
-
-                //Newline
-                printf("\n");
             }else{
                 for(c = N; c>=1; c--){
                     for(i=move; i>0; i--){
