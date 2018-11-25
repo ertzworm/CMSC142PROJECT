@@ -6,30 +6,33 @@ class Main {
 		System.out.println("Hello World!");
 
 		int N = args[0].length(); // gets the length of the first argument
-		String fileName = "./words.txt";
-		String line = null;
-		int[][] option = new int[N+2][N+2]; 
-		int[] nopts = new int[N+2];
+		String fileName = "./words.txt"; // fileName of the words.txt
+    	char[] completeWord = args[0].toCharArray(); //get the charArray equivalent of argument 1; this is the one w/o underscores
+    	char[] wordToFind = args[1].toCharArray();  // get the charArray equivalent of argument 2; this the one w/ underscores
+		int wordToFindLength = wordToFind.length; // length of the string that we have to find
+		int completeWordLength = completeWord.length; // length of the string that is complete
+		int toCompareLength;
+		String startingLetter;
+		String stringToCompare;
 
-		int i, c;
-    	int move = 0, start = 0;
 
-    	//Fill the 2d array option with negative 1
-		for(i = 0; i < option.length; ++i) {
-    		for(int j = 0; j < option[i].length; ++j) {
-        		option[i][j] = -1;
-    		}
-		}
+		int indices = countUnderscores(wordToFind, wordToFindLength); //number of underscores in the wordToFind
+		int[] indexFlags = getIndexOfUnderscore(indices, wordToFind, wordToFindLength); //gets the indices of the underscores
+		int fixedLength = wordToFindLength - indices; // length of the array that contains all the constant letters
+		int toPermutateLength = completeWordLength - fixedLength; //length of the array that contains all underscores
+		char[] fixedLetters = getFixedLetters(wordToFind, wordToFindLength, fixedLength); //array of the fixed letters
+		char[] lettersToPermutate = getLettersToPermutate(fixedLength, N, fixedLetters, completeWord, toPermutateLength); // array of the letter to be used for permutation
 
-		//Fill the 1d array nopts with negative 1
-		for(i = 0; i < nopts.length; ++i) {
-    		nopts[i] = -1;
-		}
+		N = toPermutateLength;
+		System.out.println("Fixed Letters:" + String.valueOf(fixedLetters));
+		System.out.println("Letters to Permutate: " + String.valueOf(lettersToPermutate));
 
-		//Eto yung Dictionary myDictionary sa c before
+		backtrack(N,lettersToPermutate, wordToFind, toPermutateLength, indices, indexFlags);
+	}
+
+	public static Map fileReading(String fileName) {
 		Map<String, NewDictionary> map = new HashMap<String, NewDictionary>();
-
-
+		String line = null;
 		//Babasahin yung words.txt tapos lalagay dun sa map. Naka-arrange na to in alphabetical order pero word.
 		//Bale parang lahat ng starts with "a" magkakasama sa isang linkedlist tapos ganun din yung "b" and so on.
 		try {
@@ -55,69 +58,98 @@ class Main {
         catch(IOException ex) {
             System.out.println("Error reading file '" + fileName + "'"); 
         }
-        // System.out.println(map.get("a").getList());
-        // System.out.println(sample(3));
-        // System.out.println(option[1][1]);
-        nopts[start] = 1;
-    	option[0][1] = 0;
-    	char[] completeWord = args[0].toCharArray();
-    	char[] wordToFind = args[1].toCharArray();
-		char[] toCompare = new char[N];
-		int wordToFindLength = wordToFind.length;
-		int completeWordLength = completeWord.length;
-		int toCompareLength;
-		String startingLetter;
+        return map;
+	}
+
+	public static void backtrack(int N, char[] lettersToPermutate, char[] wordToFind, int toPermutateLength, int indices, int[] indexFlags) {
+		String fileName = "./words.txt";
+		int[][] option = new int[N+2][N+2]; 
+		int[] nopts = new int[N+2];
+		char[] output = new char[toPermutateLength];
 		String stringToCompare;
+		String lettersToFillUnderscores;
+		String startingLetter;
+		String newString;
+		LinkedList<String> lettersForUnderscore = new LinkedList<String>();
+		
+		Map<String, NewDictionary> map  = fileReading(fileName);
 
+		int i, c;
+		int move = 0, start = 0;
 
-		int indices = countUnderscores(wordToFind, wordToFindLength);
-		int[] indexFlags = getIndexOfUnderscore(indices, wordToFind, wordToFindLength);    
-		int fixedLength = wordToFindLength - indices;
-		int toPermutateLength = completeWordLength - fixedLength;
-		char[] fixedLetters = getFixedLetters(wordToFind, wordToFindLength, fixedLength);
-		char[] lettersToPermutate = getLettersToPermutate(fixedLength, N, fixedLetters, completeWord, toPermutateLength);
+		//Fill the 2d array option with negative 1
+		for(i = 0; i < option.length; ++i) {
+			for(int j = 0; j < option[i].length; ++j) {
+	    		option[i][j] = -1;
+			}
+		}
 
-		N = toPermutateLength;
-		System.out.println(fixedLetters);
-		System.out.println(lettersToPermutate);
+		//Fill the 1d array nopts with negative 1
+		for(i = 0; i < nopts.length; ++i) {
+			nopts[i] = -1;
+		}
 
-        // while(nopts[start] > 0) {
-        // 	if(nopts[move] > 0) {
-        // 		nopts[++move] = 0;
+		nopts[start] = 1;
+		option[0][1] = 0;
 
-        // 		if(move == N+1) {
-        // 			for(i=1;i<=N;i++) {
-        // 				int indexOfString = option[i][nopts[i]];
-        // 				toCompare[i-1] = completeWord[indexOfString-1];
-        // 			}
+		while(nopts[start] > 0) {
+	    	if(nopts[move] > 0) {
+	    		nopts[++move] = 0;
 
-        // 			toCompareLength = toCompare.length;
+	    		if(move == N+1) {
+	    			for(i=1;i<=N;i++) {
+	    				int indexOfString = option[i][nopts[i]];
+	    				output[i-1] = lettersToPermutate[indexOfString-1];
+	    			}
 
-        // 			startingLetter = String.valueOf(toCompare[0]);
-        // 			stringToCompare = String.valueOf(toCompare);
-        // 			System.out.println(stringToCompare);
-        // 			if(map.get(startingLetter).getList().contains(stringToCompare)) {
-        // 				System.out.println("Found Match! " + stringToCompare);
-        // 			}
-        // 		} else {
-        // 			for(c = N;c >= 1;c--) {
-        // 				for(i = move;i > 0; i--) {
-        // 					if(c == option[i][nopts[i]]) {
-        // 						break;
-        // 					}
-        // 				} if(i <= 0) {
-        // 					option[move][++nopts[move]] = c;
-        // 				}
-        // 			}
-        // 		}
-        // 	} else {
-        // 		nopts[--move]--;
-        // 	}
-        // }
+	    			stringToCompare = String.valueOf(output);
+	    			lettersToFillUnderscores = stringToCompare.substring(0,indices);
+
+	    			//checks if the new permuatation has already been used
+	    			if(!lettersForUnderscore.contains(lettersToFillUnderscores)) { //if not:
+	    				lettersForUnderscore.add(lettersToFillUnderscores); //Add it to the list of strings to replace the underscores
+	    				newString = getNewWord(wordToFind,lettersToFillUnderscores); //create a new string using the lettersToFiilUnderscores
+	    				startingLetter = newString.substring(0,1); //get the first letter of the new string;
+	    				System.out.println("New String: " + newString + " Starting Letter: " + startingLetter);
+	    				if(map.get(startingLetter).getList().contains(newString)) {
+		    				System.out.println("Found Match! " + newString);
+		    			}
+	    			}
+	    			
+	    		} else {
+	    			for(c = N;c >= 1;c--) {
+	    				for(i = move;i > 0; i--) {
+	    					if(c == option[i][nopts[i]]) {
+	    						break;
+	    					}
+	    				} if(i <= 0) {
+	    					option[move][++nopts[move]] = c;
+	    				}
+	    			}
+	    		}
+	    	} else {
+	    		nopts[--move]--;
+	    	}
+	    } System.out.println(lettersForUnderscore);
 	}
 
 	public static int sample(int newNum) {
 		return(newNum+2);
+	}
+
+	public static String getNewWord(char[] wordToFind, String lettersToFillUnderscores) {
+		char[] wordToFindComplete = wordToFind.clone();
+		char[] charLettersForUn = lettersToFillUnderscores.toCharArray();
+		int i, j;
+		// System.out.println()
+		for(i = 0, j = 0; i < wordToFind.length;i++) {
+			if(wordToFindComplete[i] == '_') {
+				wordToFindComplete[i] = charLettersForUn[j];
+				j++;
+			}
+		}
+		String finalWord = String.valueOf(wordToFindComplete);
+		return finalWord;
 	}
 
 	public static int countUnderscores(char[] word, int length) {
@@ -141,20 +173,18 @@ class Main {
 	            }
 	        }
 	    }
-	    System.out.println(counter);
-	    System.out.println(indices);
-
 	    return arrayOfIndices;
 	}
 
 	public static char[] getFixedLetters(char[] wordToFind, int wordToFindLength, int fixedLength) {
 		int i = 0;
 		char[] fixedLetters = new char[fixedLength];
+		char[] tempWordToFind = wordToFind.clone();
 		while(i < fixedLength) {
 			for(int j = 0; j < wordToFindLength; j++) {
-				if(wordToFind[j] != '_') {
-					fixedLetters[i] = wordToFind[j];
-					wordToFind[j] = '_';
+				if(tempWordToFind[j] != '_') {
+					fixedLetters[i] = tempWordToFind[j];
+					tempWordToFind[j] = '_';
 					break;
 				}
 			} i++;
