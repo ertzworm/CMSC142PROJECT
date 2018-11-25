@@ -1,14 +1,15 @@
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
 
-class Main {
-	public static void main(String[] args) {
+public class BackTrackCode {
+	public BackTrackCode(String args1, String args2, JTextArea textArea) {
 		System.out.println("Hello World!");
 
-		int N = args[0].length(); // gets the length of the first argument
+		int N = args1.length(); // gets the length of the first argument
 		String fileName = "./words.txt"; // fileName of the words.txt
-    	char[] completeWord = args[0].toCharArray(); //get the charArray equivalent of argument 1; this is the one w/o underscores
-    	char[] wordToFind = args[1].toCharArray();  // get the charArray equivalent of argument 2; this the one w/ underscores
+    	char[] completeWord = args1.toCharArray(); //get the charArray equivalent of argument 1; this is the one w/o underscores
+    	char[] wordToFind = args2.toCharArray();  // get the charArray equivalent of argument 2; this the one w/ underscores
 		int wordToFindLength = wordToFind.length; // length of the string that we have to find
 		int completeWordLength = completeWord.length; // length of the string that is complete
 		int toCompareLength;
@@ -27,7 +28,7 @@ class Main {
 		System.out.println("Fixed Letters:" + String.valueOf(fixedLetters));
 		System.out.println("Letters to Permutate: " + String.valueOf(lettersToPermutate));
 
-		backtrack(N,lettersToPermutate, wordToFind, toPermutateLength, indices, indexFlags);
+		backtrack(N,lettersToPermutate, wordToFind, toPermutateLength, indices, indexFlags, textArea);
 	}
 
 	public static Map fileReading(String fileName) {
@@ -61,7 +62,7 @@ class Main {
         return map;
 	}
 
-	public static void backtrack(int N, char[] lettersToPermutate, char[] wordToFind, int toPermutateLength, int indices, int[] indexFlags) {
+	public static void backtrack(int N, char[] lettersToPermutate, char[] wordToFind, int toPermutateLength, int indices, int[] indexFlags, JTextArea textArea) {
 		String fileName = "./words.txt";
 		int[][] option = new int[N+2][N+2]; 
 		int[] nopts = new int[N+2];
@@ -92,6 +93,7 @@ class Main {
 		nopts[start] = 1;
 		option[0][1] = 0;
 
+		textArea.setText("");
 		while(nopts[start] > 0) {
 	    	if(nopts[move] > 0) {
 	    		nopts[++move] = 0;
@@ -113,6 +115,7 @@ class Main {
 	    				System.out.println("New String: " + newString + " Starting Letter: " + startingLetter);
 	    				if(map.get(startingLetter).getList().contains(newString)) {
 		    				System.out.println("Found Match! " + newString);
+		    				textArea.append("Found Match! " + newString + "\n");
 		    			}
 	    			}
 	    			
