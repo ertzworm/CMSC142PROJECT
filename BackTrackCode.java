@@ -16,7 +16,6 @@ public class BackTrackCode {
 		String startingLetter;
 		String stringToCompare;
 
-
 		int indices = countUnderscores(wordToFind, wordToFindLength); //number of underscores in the wordToFind
 		int[] indexFlags = getIndexOfUnderscore(indices, wordToFind, wordToFindLength); //gets the indices of the underscores
 		int fixedLength = wordToFindLength - indices; // length of the array that contains all the constant letters
@@ -112,9 +111,9 @@ public class BackTrackCode {
 	    				lettersForUnderscore.add(lettersToFillUnderscores); //Add it to the list of strings to replace the underscores
 	    				newString = getNewWord(wordToFind,lettersToFillUnderscores); //create a new string using the lettersToFiilUnderscores
 	    				startingLetter = newString.substring(0,1); //get the first letter of the new string;
-	    				System.out.println("New String: " + newString + " Starting Letter: " + startingLetter);
+	    				// System.out.println("New String: " + newString + " Starting Letter: " + startingLetter);
 	    				if(map.get(startingLetter).getList().contains(newString)) {
-		    				System.out.println("Found Match! " + newString);
+		    				// System.out.println("Found Match! " + newString);
 		    				textArea.append("Found Match! " + newString + "\n");
 		    			}
 	    			}
@@ -214,7 +213,7 @@ public class BackTrackCode {
 		char[] tempCompleteWord = completeWord.clone();
 		for(int i=0; i<fixedLength; i++) {
 		 	for(int j=0; j<N; j++) {
-		 		if(fixedLetters[i] == completeWord[j]) {
+		 		if(fixedLetters[i] == tempCompleteWord[j]) {
 		 			tempCompleteWord[j] = '+';
 		 			break;
 		 		}

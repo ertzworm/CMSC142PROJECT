@@ -174,6 +174,7 @@ void addToPermutated(LETTER **permutated, char allowedPermutations[]){
         head = newNode;
     }else{
         for(temp = head; strcmp(temp->word, allowedPermutations) != 0; temp=temp->next){
+            printf("%s\n", temp->word);
             if(temp == NULL){
                 newNode->next = head;
                 head = newNode;
