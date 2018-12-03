@@ -237,7 +237,8 @@ int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
     int i,c;
     int move = 0, start = 0;
     int k = N;
-    
+    int counter;
+
     nopts[start] = 1;
     option[0][1] = 0;
 
@@ -251,6 +252,7 @@ int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
     int underscoreIndices[indices];
 
     getUnderscoreIndices(underscoreIndices, indices, wordToGuess);
+
 
     printf("Letters To Permutate(L): %ld\n", strlen(lettersToPermutate));
     printf("=============================\n");
@@ -283,15 +285,30 @@ int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
                 // printf("Permutated Word: %s\n", output);
                 char subString[strlen(output)+1];
                 subString[strlen(output)] = 0;
+
+
+                //Only chooses the number of letters required, not all the permutated letters
                 getSubstring(subString, output, indices);
 
-                //printf("Substring is: %s\n", subString);
+
+                //Copies the properties of the first argument to a string
+                char newWord[N];
+                strcpy(newWord, wordToGuess);
+
+                //Fills in the missing underscores with the permutated word correspondingly
+                for(i=0; i<indices; i++){
+                    newWord[underscoreIndices[i]] = subString[i];
+                }
+
+                // printf("Substring is: %s\n", subString);
+                // printf("New word is: %s\n", newWord);
+                
 
                 
                 char testVar[strlen(wordToGuess)];
                 strcpy(testVar, wordToGuess);
 
-                addToPermutated(&permutated, subString, testVar);
+                addToPermutated(&permutated, newWord, testVar);
 
                 
             }else{
@@ -330,7 +347,7 @@ int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
     // }
 
     LETTER *temp = permutated;
-    int counter = 0;
+    counter = 0;
     printf("Words to check in dictionary: \n");
     while(temp != NULL) {
         printf("[%d] %s\n", counter, temp->word);
@@ -353,11 +370,6 @@ int backtrack(int N, char lettersToPermutate[], char wordToGuess[]){
         }
         temp = temp->next;
     }
-
-
-
-    
-
     return 0;
 }
 
@@ -369,11 +381,11 @@ int main(int argc, char *argv[]){
     printf("=========== STATS ===========\n");
     printf("Starting N: %d\n", N);
     
-    int option[N+2][N+2];
-    int nopts[N+2];
+    // int option[N+2][N+2];
+    // int nopts[N+2];
 
     int i, c, j;
-    int move = 0, start = 0;
+    //int move = 0, start = 0;
 
 
     int k = N;
@@ -386,8 +398,8 @@ int main(int argc, char *argv[]){
     int toCompareLength;
     int testVarLength;
 
-    nopts[start] = 1;
-    option[0][1] = 0;
+    // nopts[start] = 1;
+    // option[0][1] = 0;
 
     //Array of pointers + pointer for traversal
     // LETTER *myDictionary[26];
@@ -471,12 +483,12 @@ int main(int argc, char *argv[]){
         strcpy(s3, firstArgument);
 
         for(i=0; i<fixedLength; i++){
-        for(j=0; j<N; j++){
-            if(fixedLetters[i] == s3[j]){
-                s3[j] = '+';
-                break;
+            for(j=0; j<N; j++){
+                if(fixedLetters[i] == s3[j]){
+                    s3[j] = '+';
+                    break;
+                }
             }
-        }
         }
 
         strcpy(s5, s3);
@@ -492,10 +504,6 @@ int main(int argc, char *argv[]){
             }
         }
     }
-
-    
-
-    
 
     
     // printf("Strlen of lettersToPermutate is: %ld\n", toPermutateLength);
